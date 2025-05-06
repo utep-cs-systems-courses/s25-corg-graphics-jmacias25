@@ -19,7 +19,6 @@ extern void play();
 #define HIT_ROW (screenHeight -50)
 #define BLOCK_SIZE 10
 
-char blue = 31, green = 0, red = 31;
 unsigned char step = 0;
 int score = 0;
 
@@ -85,6 +84,7 @@ draw_note4(int col, int row, unsigned short color)
 }
 
 short prevControlPos[4][2] = {{0,0},{0,0},{0,0},{0,0}};
+char playSound = 0;
 
 void
 screen_update_ball()
@@ -122,7 +122,6 @@ draw_score(){
   
 
 short redrawScreen = 1;
-u_int controlFontColor = COLOR_GREEN;
 
 void wdt_c_handler()
 {
@@ -139,9 +138,8 @@ void wdt_c_handler()
       if ((switches & (1 << i)) &&
 	  (controlPos[i][1] + BLOCK_SIZE >= HIT_ROW) &&
 	  (controlPos[i][1] <= HIT_ROW + BLOCK_SIZE)) {
-	
 	score++;
-	play();
+	playSound = 1;
 	controlPos[i][1] = 0;
       }
 
@@ -161,6 +159,10 @@ void main()
   
   P1DIR |= LED;		/**< Green led on when CPU on */
   P1OUT |= LED;
+  
+  P2DIR |= BIT1; //setting buzzer as a output
+  P2OUT &= ~BIT1; // make sure it's off
+  
   configureClocks();
   lcd_init();
   switch_init();
@@ -176,6 +178,10 @@ void main()
     if (redrawScreen) {
       redrawScreen = 0;
       update_shape();
+    }
+    if (playSound){
+      playSound = 0;
+      play();
     }
     P1OUT &= ~LED;	/* led off */
     or_sr(0x10);	/**< CPU OFF */
