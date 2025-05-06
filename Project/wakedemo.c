@@ -3,6 +3,8 @@
 #include "lcdutils.h"
 #include "lcddraw.h"
 
+extern void play();
+
 // WARNING: LCD DISPLAY USES P1.0.  Do not touch!!! 
 
 #define LED BIT6		/* note that bit zero req'd for display */
@@ -137,7 +139,9 @@ void wdt_c_handler()
       if ((switches & (1 << i)) &&
 	  (controlPos[i][1] + BLOCK_SIZE >= HIT_ROW) &&
 	  (controlPos[i][1] <= HIT_ROW + BLOCK_SIZE)) {
+	
 	score++;
+	play();
 	controlPos[i][1] = 0;
       }
 
