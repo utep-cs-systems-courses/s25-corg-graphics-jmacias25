@@ -53,7 +53,7 @@ switch_interrupt_handler()
 
 // axis zero for col, axis 1 for row
 
-short drawPos[2] = {1,10}, controlPos[2] = {2, 10};
+short drawPos[2] = {1,10}, controlPos[4][2] = {{20, 0},{45,0},{70,0},{95,0}};
 short colVelocity = 1, colLimits[2] = {1, screenWidth};
 short rowVelocity = 2, rowLimits[2] = {1, screenHeight};
 
@@ -67,41 +67,42 @@ draw_note(int col, int row, unsigned short color)
 void
 draw_note2(int col, int row, unsigned short color)
 {
-  fillRectangle(col+25, row-1, 10, 10, color);
+  fillRectangle(col+10, row-1, 10, 10, color);
 }
 
 void
 draw_note3(int col, int row, unsigned short color)
 {
-  fillRectangle(col+51, row-1, 10, 10, color);
+  fillRectangle(col+15, row-1, 10, 10, color);
 }
 
 void
 draw_note4(int col, int row, unsigned short color)
 {
-  fillRectangle(col+77, row-1, 10, 10, color);
+  fillRectangle(col+25, row-1, 10, 10, color);
 }
+
+short prevY[4] = {0, 0, 0, 0};
 
 void
 screen_update_ball()
 {
-  for (char axis = 0; axis < 2; axis ++) 
-    if (drawPos[axis] != controlPos[axis]) /* position changed? */
-      goto redraw;
-  return;			/* nothing to do */
- redraw:
-  /* erase */
-  draw_note(drawPos[1], drawPos[0], COLOR_BLUE);
-  draw_note2(drawPos[1], drawPos[0], COLOR_BLUE);
-  draw_note3(drawPos[1], drawPos[0], COLOR_BLUE);
-  draw_note4(drawPos[1], drawPos[0], COLOR_BLUE);
+  for (int i = 0; i < 4; i++){ 
   
-  for (char axis = 0; axis < 2; axis ++) 
-    drawPos[axis] = controlPos[axis];
-  draw_note(drawPos[1], drawPos[0], COLOR_GREEN);
-  draw_note2(drawPos[1], drawPos[0], COLOR_RED);
-  draw_note3(drawPos[1], drawPos[0], COLOR_YELLOW);
-  draw_note4(drawPos[1], drawPos[0], COLOR_PINK);
+    fillRectangle(controlPos[i][0], prevY[i], BLOCK_SIZE, BLOCK_SIZE, COLOR_BLUE);
+  
+    prevY[i] = controlPos[i][1];
+    
+   if(i == 0){
+     draw_note(controlPos[i][0], controlPos[i][1], COLOR_GREEN);}
+   else if(i ==1){
+       draw_note2(controlPos[i][0], controlPos[i][1], COLOR_RED);}
+   else if(i == 2){
+     draw_note3(controlPos[i][0], controlPos[i][1], COLOR_YELLOW);}
+   else {
+     draw_note4(controlPos[i][0], controlPos[i][1], COLOR_PINK);
+   }
+  }
 }
 
 void
@@ -118,27 +119,29 @@ u_int controlFontColor = COLOR_GREEN;
 void wdt_c_handler()
 {
   static int secCount = 0;
-  secCount ++;
-  if (secCount >= 25)		/* 10/sec */
-    {
-      secCount = 0;
+  secCount++;
 
-      controlPos[1] += 1;
+  if (secCount >= 25){
+    secCount = 0;
 
-      if ((switches & SW1) &&
-	  (controlPos[1] + 3 >= HIT_ROW) &&
-	  (controlPos[1] <= HIT_ROW + 3)){
+    for (int i = 0; i < 4; i++){
 
+      controlPos[i][1] += 2;
+
+      if ((switches & (1 << i)) &&
+	  (controlPos[i][1] + BLOCK_SIZE >= HIT_ROW) &&
+	  (controlPos[i][1] <= HIT_ROW + BLOCK_SIZE)) {
 	score++;
-	controlPos[1] = 0;
-    }
+	controlPos[i][1] = 0;
+      }
 
-    if(controlPos[1] >= screenHeight){
-      controlPos[1] = 0;
+      if (controlPos[i][1] > screenHeight){
+	controlPos[i][1] = 0;
+      }
     }
 
     redrawScreen = 1;
-    }
+  }
 }
   
 void update_shape();
