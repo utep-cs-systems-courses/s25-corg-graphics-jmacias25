@@ -82,16 +82,22 @@ draw_note4(int col, int row, unsigned short color)
   fillRectangle(col+25, row-1, 10, 10, color);
 }
 
-short prevY[4] = {0, 0, 0, 0};
+short prevControlPos[4][2] = {{0,0},{0,0},{0,0},{0,0}};
 
 void
 screen_update_ball()
 {
   for (int i = 0; i < 4; i++){ 
-  
-    fillRectangle(controlPos[i][0], prevY[i], BLOCK_SIZE, BLOCK_SIZE, COLOR_BLUE);
-  
-    prevY[i] = controlPos[i][1];
+    draw_note(prevControlPos[i][0], prevControlPos[i][1], COLOR_BLUE);
+    draw_note2(prevControlPos[i][0], prevControlPos[i][1], COLOR_BLUE);
+    draw_note3(prevControlPos[i][0], prevControlPos[i][1], COLOR_BLUE);
+    draw_note4(prevControlPos[i][0], prevControlPos[i][1], COLOR_BLUE);
+
+    prevControlPos[i][0] = controlPos[i][0];
+    prevControlPos[i][1] = controlPos[i][1];
+
+    controlPos[i][1] += 1;
+    
     
    if(i == 0){
      draw_note(controlPos[i][0], controlPos[i][1], COLOR_GREEN);}
