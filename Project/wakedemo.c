@@ -54,11 +54,11 @@ switch_interrupt_handler()
 
 // axis zero for col, axis 1 for row
 
-short drawPos[2] = {1,10}, controlPos[4][2] = {{20, 0},{45,0},{70,0},{95,0}};
-short colVelocity = 1, colLimits[2] = {1, screenWidth};
+short drawPos[2] = {1,10}, controlPos[4][2] = {{20, 0},{45,0},{70,0},{95,0}}; // positions for the squares
+short colVelocity = 1, colLimits[2] = {1, screenWidth}; // speed for the squares
 short rowVelocity = 2, rowLimits[2] = {1, screenHeight};
 
-
+// notes are drawn using these functions
 void
 draw_note(int col, int row, unsigned short color)
 {
@@ -82,10 +82,11 @@ draw_note4(int col, int row, unsigned short color)
 {
   fillRectangle(col+25, row-1, 10, 10, color);
 }
-
+// array for the previous spot where the square was to erase
 short prevControlPos[4][2] = {{0,0},{0,0},{0,0},{0,0}};
 char playSound = 0;
 
+// draw the squares here and clear the back
 void
 screen_update_ball()
 {
@@ -112,7 +113,7 @@ screen_update_ball()
    }
   }
 }
-
+// draw score
 void
 draw_score(){
   char scoreStr[10];
@@ -122,7 +123,8 @@ draw_score(){
   
 
 short redrawScreen = 1;
-
+// loop for squares and the hit detection with a counter
+//buzzer also supposed to go off but it don't :(
 void wdt_c_handler()
 {
   static int secCount = 0;
@@ -139,7 +141,7 @@ void wdt_c_handler()
 	  (controlPos[i][1] + BLOCK_SIZE >= HIT_ROW) &&
 	  (controlPos[i][1] <= HIT_ROW + BLOCK_SIZE)) {
 	score++;
-	playSound = 1;
+	play();
 	controlPos[i][1] = 0;
       }
 
@@ -178,10 +180,6 @@ void main()
     if (redrawScreen) {
       redrawScreen = 0;
       update_shape();
-    }
-    if (playSound){
-      playSound = 0;
-      play();
     }
     P1OUT &= ~LED;	/* led off */
     or_sr(0x10);	/**< CPU OFF */
