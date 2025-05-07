@@ -19,6 +19,8 @@
 #define HIT_ROW (screenHeight -50)
 #define BLOCK_SIZE 10
 
+extern void play_note();
+
 unsigned char step = 0;
 int score = 0;
 
