@@ -21,5 +21,5 @@ clean:
 	msp430-elf-as -mmcu=$(CPU) -o $@ $<
 buzzer.o: buzzer.c
 
-play_tone.o: play_tone.c
+play_tone.o: play_tone.s
 
