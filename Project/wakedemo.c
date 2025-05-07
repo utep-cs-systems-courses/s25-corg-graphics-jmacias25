@@ -19,7 +19,7 @@
 #define HIT_ROW (screenHeight -50)
 #define BLOCK_SIZE 10
 
-extern void play_note();
+extern void play();
 
 unsigned char step = 0;
 int score = 0;
@@ -143,6 +143,7 @@ void wdt_c_handler()
 	  (controlPos[i][1] + BLOCK_SIZE >= HIT_ROW) &&
 	  (controlPos[i][1] <= HIT_ROW + BLOCK_SIZE)) {
 	score++;
+	play(i*100);
 	controlPos[i][1] = 0;
       }
 
