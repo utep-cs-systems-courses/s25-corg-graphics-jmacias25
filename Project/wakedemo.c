@@ -2,6 +2,7 @@
 #include <libTimer.h>
 #include "lcdutils.h"
 #include "lcddraw.h"
+#include "buzzer.h"
 
 
 // WARNING: LCD DISPLAY USES P1.0.  Do not touch!!! 
@@ -104,7 +105,7 @@ screen_update_ball()
    if(i == 0){
      draw_note(controlPos[i][0], controlPos[i][1], COLOR_GREEN);}
    else if(i ==1){
-       draw_note2(controlPos[i][0], controlPos[i][1], COLOR_RED);}
+     draw_note2(controlPos[i][0], controlPos[i][1], COLOR_RED);}
    else if(i == 2){
      draw_note3(controlPos[i][0], controlPos[i][1], COLOR_YELLOW);}
    else {
@@ -145,6 +146,7 @@ void wdt_c_handler()
 
       if (controlPos[i][1] > screenHeight){
 	controlPos[i][1] = 0;
+	
       }
     }
 
@@ -164,6 +166,7 @@ void main()
   configureClocks();
   lcd_init();
   switch_init();
+  buzzer_init();
   
   enableWDTInterrupts();      /**< enable periodic interrupt */
   or_sr(0x8);	              /**< GIE (enable interrupts) */
